@@ -1,0 +1,23 @@
+#!/bin/sh
+DIR=$(dirname $0)
+
+CDN='http://download.nextag.com/apache/spark/'
+
+VERSION='1.3.0'
+SPARK_DIR="spark-${VERSION}-bin-hadoop2.4"
+TARBALL="$SPARK_DIR.tgz"
+SPARK_LIB_DIR="/usr/local/lib/spark"
+
+URL="$CDN/spark-$VERSION/$TARBALL"
+
+test -d $SPARK_LIB_DIR && echo "Spark already installed" && exit 1
+
+cd /tmp
+curl -O $URL
+tar -xvf $TARBALL
+
+cp -rf $SPARK_DIR $SPARK_LIB_DIR
+ln -fs ../$SPARK_DIR $SPARK_LIB_DIR
+
+echo "export SPARK_LIB_DIR=$SPARK_LIB_DIR" >> ~/.bashrc-local
+echo "export PATH=\$PATH:$SPARK_LIB_DIR/bin" >> ~/.bashrc-local

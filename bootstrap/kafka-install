@@ -1,0 +1,24 @@
+#!/bin/sh
+DIR=$(dirname $0)
+
+CDN='http://mirror.cc.columbia.edu/pub/software/apache/kafka'
+
+VERSION='0.8.2.1'
+SCALA_VERSION='2.9.1'
+KAFKA_DIR="kafka_${SCALA_VERSION}-${VERSION}"
+TARBALL="$KAFKA_DIR.tgz"
+KAFKA_LIB_DIR="/usr/local/lib/kafka"
+
+URL="$CDN/$VERSION/$TARBALL"
+
+test -d $KAFKA_LIB_DIR && echo "Kafaka lready installed" && exit 1
+
+cd /tmp
+curl -O $URL
+tar -xvf $TARBALL
+
+cp -rf $KAFKA_DIR $KAFKA_LIB_DIR
+ln -fs ../$KAFKA_DIR $KAFKA_LIB_DIR
+
+echo "export KAFKA_LIB_DIR=$KAFKA_LIB_DIR" >> ~/.bashrc-local
+echo "export PATH=\$PATH:\$KAFKA_LIB_DIR/bin" >> ~/.bashrc-local

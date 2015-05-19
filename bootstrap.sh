@@ -28,7 +28,7 @@ cat >> /etc/profile <<EOF
 export PATH=$PATH:/usr/local/lib/hadoop/bin:/usr/local/lib/kafka/bin:/usr/local/lib/spark/bin:/usr/local/lib/zookeeper/bin
 EOF
 
-hostname | sed -e 's?node??' >/usr/local/lib/zookeeper/
+hostname | sed -e 's?node??' | tee /usr/local/lib/zookeeper/myid
 
 cat >> /etc/hosts<<EOF
 192.168.20.11 node1

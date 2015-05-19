@@ -1,0 +1,2 @@
+LIB_DIR=/usr/local/lib
+export PATH=$PATH:$LIB_DIR/zookeeper/bin:$LIB_DIR/kafka/bin:$LIB_DIR/spark/bin:$LIB_DIR/hadoop/bin:$LIB_DIR/hadoop/sbin

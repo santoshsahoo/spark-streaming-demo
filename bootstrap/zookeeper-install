@@ -6,17 +6,21 @@ CDN='http://apache.osuosl.org/zookeeper/stable'
 VERSION='3.4.6'
 ZK_DIR="zookeeper-${VERSION}"
 TARBALL="$ZK_DIR.tar.gz"
-ZK_LIB_DIR="/usr/local/lib/zookeeper"
+LIB_DIR="/usr/local/lib"
+ZK_LIB_DIR="$LIB_DIR/zookeeper"
 
 URL="$CDN/$TARBALL"
 
 test -d $ZK_LIB_DIR && echo "Zookeeper Already installed" && exit 1
 
+
+cd /tmp
+
 curl -O $URL
 tar -xvf $TARBALL
 
-cp -rf $ZK_DIR /usr/lib
-ln -fs /usr/lib/$ZK_DIR $ZK_LIB_DIR
+cp -rf $ZK_DIR $LIB_DIR
+ln -fs $ZK_DIR $ZK_LIB_DIR
 chmod -x $ZK_LIB_DIR/bin/*.cmd
 
 echo "export ZK_LIB_DIR=$ZK_LIB_DIR" >> ~/.bashrc-local

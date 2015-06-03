@@ -18,6 +18,3 @@ curl -O "$URL"
 tar -xvf $Tarball
 mv -f $HD_DIR $LIB_DIR
 ln -fs $HD_DIR $HD_LIB_DIR
-
-echo "export HD_LIB_DIR=$HD_LIB_DIR" >> ~/.bashrc-local
-echo "export PATH=\$PATH:\$HD_LIB_DIR/bin" >> ~/.bashrc-local

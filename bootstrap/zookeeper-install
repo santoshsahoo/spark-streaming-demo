@@ -13,7 +13,6 @@ URL="$CDN/$TARBALL"
 
 test -d $ZK_LIB_DIR && echo "Zookeeper Already installed" && exit 1
 
-
 cd /tmp
 
 curl -O $URL
@@ -22,6 +21,3 @@ tar -xvf $TARBALL
 cp -rf $ZK_DIR $LIB_DIR
 ln -fs $ZK_DIR $ZK_LIB_DIR
 chmod -x $ZK_LIB_DIR/bin/*.cmd
-
-echo "export ZK_LIB_DIR=$ZK_LIB_DIR" >> ~/.bashrc-local
-echo "export PATH=\$PATH:\$ZK_LIB_DIR/bin" >> ~/.bashrc-local

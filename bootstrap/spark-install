@@ -19,6 +19,3 @@ tar -xvf $TARBALL
 
 cp -rf $SPARK_DIR $LIB_DIR
 ln -fs $SPARK_DIR $SPARK_LIB_DIR
-
-echo "export SPARK_LIB_DIR=$SPARK_LIB_DIR" >> ~/.bashrc-local
-echo "export PATH=\$PATH:$SPARK_LIB_DIR/bin" >> ~/.bashrc-local

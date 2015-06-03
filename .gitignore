@@ -1,5 +1,10 @@
 *.out
 zookeeper/
 .vagrant/
+node_modules/
+target/
 tmp
 *.log
+*.class
+*.tmp
+*.jar

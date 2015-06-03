@@ -22,6 +22,3 @@ tar -xvf $TARBALL
 
 cp -rf $KAFKA_DIR $LIB_DIR
 ln -fs $KAFKA_DIR $KAFKA_LIB_DIR
-
-echo "export KAFKA_LIB_DIR=$KAFKA_LIB_DIR" >> ~/.bashrc-local
-echo "export PATH=\$PATH:\$KAFKA_LIB_DIR/bin" >> ~/.bashrc-local

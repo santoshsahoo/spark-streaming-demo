@@ -9,7 +9,7 @@ stopeverything() {
   ZOO_LOG_DIR="$ZOO_LOG_DIR" $ZOO_BIN/zkServer.sh stop "$PWD/$ZK_CFGFILE"
 
   echo "Stopping Kafka.."
-  LOG_DIR="KF_LOG_DIR" $KF_BIN/kafka-server-stop.sh "$PWD/$KF_CFGFILE"
+  LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-server-stop.sh "$PWD/$KF_CFGFILE"
 
   SPARK_LOG_DIR="$SPARK_LOG_DIR" /usr/local/lib/spark/sbin/stop-master.sh
 
@@ -56,7 +56,7 @@ sleep 5
 echo "Create Kafka topic $KF_TOPIC_NAME.."
 
 KF_TOPIC_NAME="expense.reports"
-LOG_DIR="KF_LOG_DIR" $KF_BIN/kafka-topics.sh \
+LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-topics.sh \
   --zookeeper localhost:2181/expensekafka \
   --create --topic "$KF_TOPIC_NAME" \
   --replication-factor 1 \
@@ -77,7 +77,7 @@ printf "${GREEN}Everything is ready${NC} ..\n===================================
 jps
 
 echo "Waiting for messages to kafka.."
-LOG_DIR="KF_LOG_DIR" $KF_BIN/kafka-simple-consumer-shell.sh \
+LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-simple-consumer-shell.sh \
   --topic "expense.reports" \
   --broker-list "localhost:9092" \
   --offset -1 \

@@ -7,13 +7,8 @@ import java.util.HashMap
 object ESBProducer {
 
   def main(args: Array[String]) {
-    if (args.length < 4) {
-      System.err.println("Usage: ESBProducer <metadataBrokerList> <topic> " +
-        "<messagesPerSec> <wordsPerMessage>")
-      System.exit(1)
-    }
 
-    val Array(brokers, topic, messagesPerSec, wordsPerMessage) = args
+    val brokers, topic, messagesPerSec = "localhost:9092", "expense.reports", 10000
 
     // Zookeeper connection properties
     val props = new HashMap[String, Object]()

@@ -85,6 +85,6 @@ LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-simple-consumer-shell.sh \
 
 readline line
 #test
-#kafka-console-producer.sh --topic "expense.reports" --broker-list localhost:9092
+#kafka-console-producer.sh --topic "expense.reports" --broker-list node1:9092
 
 stopeverything

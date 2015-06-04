@@ -1,17 +1,25 @@
 package com.foo.datainsights
 
-import java.util.HashMap
-import java.util.Date
-import kafka.utils.Json
-import org.apache.ivy.util.DateUtil
+import java.util.{Date, HashMap}
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
+import org.json4s._
+import org.json4s.native.Serialization
 
 import scala.util.Random
 
 object ESBProducer {
 
   def main(args: Array[String]) {
-    val (brokers, topic, messagesPerSec) = ("localhost:9092", "expense.reports", 10000)
+    implicit val formats = Serialization.formats(
+      ShortTypeHints(
+        List(
+          classOf[ReportHeader],
+          classOf[ReportEntry]
+        )
+      )
+    )
+
+    val (brokers, topic, messagesPerSec) = ("localhost:9092", "expense.reports", 1000)
 
     // Zookeeper connection properties
     val props = new HashMap[String, Object]()
@@ -25,22 +33,20 @@ object ESBProducer {
 
     // Send some messages
     while (true) {
-      val entityId = 1
       (1 to messagesPerSec).foreach { rptId =>
-        val rpt = ReportHeader(entityId, rptId, "First report", DateUtil.parse("01/02/2014"), "user1")
+        val entityId = Random.nextInt(20000)
+        val rpt = ReportHeader(entityId, rptId, "First report", new Date(), "user1")
         (1 to Random.nextInt(20)).foreach { entryId =>
           val entry = ReportEntry(entityId, rptId, entryId, "First report", 200, 'C')
         }
 
         val rptKey = "%d:%d".format(entityId, rptId)
-        val rptVal = Json.encode(rpt)
+        val rptJson = Serialization.write(rpt)
 
-        val message = new ProducerRecord[String, String](topic, rptKey, rptVal)
+        val message = new ProducerRecord[String, String](topic, rptKey, rptJson)
         producer.send(message)
       }
-
       Thread.sleep(100)
     }
   }
 }
-

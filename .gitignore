@@ -10,3 +10,4 @@ tmp
 *.jar
 .DS_Store
 .idea/
+checkpoint/

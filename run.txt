@@ -1,0 +1,4 @@
+#producer
+sbt 'runMain com.foo.datainsights.ESBProducer'
+
+find lib_managed/ -name '*.jar' -exec cp {} lib/ \;

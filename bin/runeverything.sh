@@ -9,16 +9,15 @@ stopeverything() {
   ZOO_LOG_DIR="$ZOO_LOG_DIR" $ZOO_BIN/zkServer.sh stop "$PWD/$ZK_CFGFILE"
 
   echo "Stopping Kafka.."
-  LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-server-stop.sh "$PWD/$KF_CFGFILE"
+  LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-server-stop.sh "$PWD/$KF_CFGFILE" 2>/dev/null
 
   SPARK_LOG_DIR="$SPARK_LOG_DIR" /usr/local/lib/spark/sbin/stop-master.sh
 
-  sleep 5
-  killall -9 java
+  sleep 10
+  killall -9 java 2>/dev/null
 
   echo "Still running (if any)"
   jps
-
 }
 
 trap stopeverything INT
@@ -51,7 +50,7 @@ mkdir -p /tmp/kafka/1/{data,logs}
 LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-server-start.sh -daemon "$PWD/$KF_CFGFILE"
 
 #wait for kafka to come alive
-sleep 5
+sleep 10
 
 echo "Create Kafka topic $KF_TOPIC_NAME.."
 
@@ -83,7 +82,6 @@ LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-simple-consumer-shell.sh \
   --offset -1 \
   --partition 0
 
-readline line
 #test
 #kafka-console-producer.sh --topic "expense.reports" --broker-list node1:9092
 

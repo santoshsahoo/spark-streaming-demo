@@ -1,14 +1,12 @@
 package com.foo.datainsights
 
-import org.apache.kafka.clients.producer.{ProducerConfig, KafkaProducer, ProducerRecord}
-import org.apache.spark.{SparkConf, Logging}
 import java.util.HashMap
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 
 object ESBProducer {
 
   def main(args: Array[String]) {
-
-    val brokers, topic, messagesPerSec = "localhost:9092", "expense.reports", 10000
+    val (brokers, topic, messagesPerSec) = ("localhost:9092", "expense.reports", 10000)
 
     // Zookeeper connection properties
     val props = new HashMap[String, Object]()
@@ -21,9 +19,9 @@ object ESBProducer {
     val producer = new KafkaProducer[String, String](props)
 
     // Send some messages
-    while(true) {
+    while (true) {
       (1 to messagesPerSec.toInt).foreach { messageNum =>
-        val str = (1 to wordsPerMessage.toInt).map(x => scala.util.Random.nextInt(10).toString)
+        val str = (1 to 5).map(x => scala.util.Random.nextInt(10).toString)
           .mkString(" ")
 
         val message = new ProducerRecord[String, String](topic, null, str)
@@ -34,3 +32,4 @@ object ESBProducer {
     }
   }
 }
+

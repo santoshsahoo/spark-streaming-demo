@@ -15,7 +15,7 @@ object Transformer extends Logging {
     ssc.checkpoint("checkpoint")
     val topicMap = topics.split(",").map((_, numThreads.toInt)).toMap
     val rows = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
-    rows.
+    //rows.
 
     ssc.start()
   }

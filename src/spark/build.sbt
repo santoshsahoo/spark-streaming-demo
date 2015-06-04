@@ -13,7 +13,7 @@ libraryDependencies ++= List(
   "org.apache.spark" %% "spark-streaming" % "1.3.0",
   "org.apache.spark" %% "spark-streaming-kafka" % "1.3.0",
   "org.apache.spark" %% "spark-mllib" % "1.3.0",
-  "com.twitter" % "parquet-hadoop" % "1.6.0",
+  "com.twitter" % "parquet-hadoop" % "1.6.0rc3",
   "mysql" % "mysql-connector-java" % "5.1.31",
   "com.datastax.spark" %% "spark-cassandra-connector" % "1.0.0-rc5",
   "com.datastax.spark" %% "spark-cassandra-connector-java" % "1.0.0-rc5",

@@ -1,7 +1,12 @@
 package com.foo.datainsights
 
 import java.util.HashMap
+import java.util.Date
+import kafka.utils.Json
+import org.apache.ivy.util.DateUtil
 import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
+
+import scala.util.Random
 
 object ESBProducer {
 
@@ -20,15 +25,21 @@ object ESBProducer {
 
     // Send some messages
     while (true) {
-      (1 to messagesPerSec.toInt).foreach { messageNum =>
-        val str = (1 to 5).map(x => scala.util.Random.nextInt(10).toString)
-          .mkString(" ")
+      val entityId = 1
+      (1 to messagesPerSec).foreach { rptId =>
+        val rpt = ReportHeader(entityId, rptId, "First report", DateUtil.parse("01/02/2014"), "user1")
+        (1 to Random.nextInt(20)).foreach { entryId =>
+          val entry = ReportEntry(entityId, rptId, entryId, "First report", 200, 'C')
+        }
 
-        val message = new ProducerRecord[String, String](topic, null, str)
+        val rptKey = "%d:%d".format(entityId, rptId)
+        val rptVal = Json.encode(rpt)
+
+        val message = new ProducerRecord[String, String](topic, rptKey, rptVal)
         producer.send(message)
       }
 
-      Thread.sleep(1000)
+      Thread.sleep(100)
     }
   }
 }

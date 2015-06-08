@@ -18,7 +18,7 @@ Vagrant.configure(2) do |config|
     node.vm.network "forwarded_port", guest: 8080, host: 8080
 
     node.vm.provider "virtualbox" do |vb|
-        vb.memory = 1024*4
+        vb.memory = 1024*8
     end
   end
 

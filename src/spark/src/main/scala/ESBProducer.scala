@@ -19,7 +19,7 @@ object ESBProducer {
       )
     )
 
-    val (brokers, topic, messagesPerSec) = ("localhost:9092", "expense.reports", 1000)
+    val (brokers, topic, messagesPerSec) = (Consts.BrokerName, Consts.TopicName, 10)
 
     // Zookeeper connection properties
     val props = new HashMap[String, Object]()

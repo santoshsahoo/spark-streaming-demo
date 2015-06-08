@@ -1,6 +1,6 @@
 
 echo Update apt-get...
-apt-get update -qq
+apt-get update -yqq
 echo Install java...
 apt-get install openjdk-7-jdk -yqq
 

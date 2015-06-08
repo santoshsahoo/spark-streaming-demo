@@ -75,9 +75,9 @@ sleep 5
 printf "${GREEN}Everything is ready${NC} ..\n===================================\n"
 jps
 
-echo "Waiting for messages to kafka.."
+echo "Waiting for messages to kafka topic $KF_TOPIC_NAME."
 LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-simple-consumer-shell.sh \
-  --topic "expense.reports" \
+  --topic "$KF_TOPIC_NAME" \
   --broker-list "localhost:9092" \
   --offset -1 \
   --partition 0

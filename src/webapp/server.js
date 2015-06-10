@@ -1,6 +1,9 @@
 var express = require('express');
 var http = require('http');
 var nunjucks = require('nunjucks');
+var kafka = require('kafka-node'),
+  Consumer = kafka.Consumer,
+  client = new kafka.Client('localhost:2181/expensekafka');
 
 var app = express();
 
@@ -26,6 +29,7 @@ app.get('/realtime', function(req, res) {
 })
 
 app.get('/stream', function(req, res) {
+  req.socket.setTimeout(Infinity);
   if (req.headers.accept && req.headers.accept == 'text/event-stream') {
     res.writeHead(200, {
       'Content-Type': 'text/event-stream',
@@ -35,12 +39,36 @@ app.get('/stream', function(req, res) {
 
     var id = (new Date()).toLocaleTimeString();
 
-    setInterval(function() {
-      sendSSE(res, id, (new Date()).toLocaleTimeString());
-    }, 2000);
+    var consumer = new Consumer(client, [{
+      topic: 'expense.counts',
+      partition: 0,
+      offset: -1,
+      fromOffset: true
+    }], {
+      autoCommit: false
+    });
 
-    sendSSE(res, id, (new Date()).toLocaleTimeString());
+    consumer.on('error', function(err) {
+      consumer.close();
+      console.log(err);
+    })
 
+    console.log("New SSE connected");
+
+    consumer.on('message', function(message) {
+      var high = 5000, low = 0, rand = Math.random() * (high - low) + low;
+      var num = parseInt(message.value) || 0;;
+      sendSSE(res, id, num);
+
+      console.log("sent " + num);
+    });
+
+    // var high = 5000, low = 0, rand = Math.random() * (high - low) + low;
+    // setInterval(function() {
+    //   sendSSE(res, id, rand);
+    // }, 2000);
+
+    sendSSE(res, id, 0);
   } else {
     res.writeHead(500);
     res.end();

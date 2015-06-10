@@ -5,6 +5,7 @@ package com.foo.datainsights
  */
 object Consts {
   final val TopicName = "expense.reports"
-  final val BrokerName ="localhost:9092"
-  final val Zookeeper="localhost:2181/expensekafka"
+  final val BrokerName ="node1:9092"
+  final val Zookeeper="node1:2181/expensekafka"
+  final val TopicName_Count = "expense.counts"
 }

@@ -5,6 +5,8 @@ BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 stopeverything() {
+  trap - INT
+
   echo "Stopping ZoooKeeper.."
   ZOO_LOG_DIR="$ZOO_LOG_DIR" $ZOO_BIN/zkServer.sh stop "$PWD/$ZK_CFGFILE"
 
@@ -56,10 +58,16 @@ echo "Create Kafka topic $KF_TOPIC_NAME.."
 
 KF_TOPIC_NAME="expense.reports"
 LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-topics.sh \
-  --zookeeper localhost:2181/expensekafka \
+  --zookeeper node1:2181/expensekafka \
   --create --topic "$KF_TOPIC_NAME" \
   --replication-factor 1 \
   --partitions 1
+
+LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-topics.sh \
+    --zookeeper node1:2181/expensekafka \
+    --create --topic "expense.counts" \
+    --replication-factor 1 \
+    --partitions 1
 
 echo "Starting Spark.."
 SPARK_SBIN="/usr/local/lib/spark/sbin"
@@ -78,7 +86,7 @@ jps
 echo "Waiting for messages to kafka topic $KF_TOPIC_NAME."
 LOG_DIR="$KF_LOG_DIR" $KF_BIN/kafka-simple-consumer-shell.sh \
   --topic "$KF_TOPIC_NAME" \
-  --broker-list "localhost:9092" \
+  --broker-list "node1:9092" \
   --offset -1 \
   --partition 0
 

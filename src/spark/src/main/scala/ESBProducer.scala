@@ -47,7 +47,7 @@ object ESBProducer {
         producer.send(message)
       }
 
-      Thread.sleep(DataGenerator.int(200))
+      Thread.sleep(DataGenerator.int(20))
     }
   }
 }

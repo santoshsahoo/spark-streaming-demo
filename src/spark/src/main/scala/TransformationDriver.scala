@@ -2,8 +2,7 @@ package com.foo.datainsights
 
 import java.util.HashMap
 
-import org.apache.kafka.clients.producer.{ProducerRecord, KafkaProducer, ProducerConfig}
-import org.apache.spark.storage.StorageLevel
+import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.{Logging, SparkConf}
@@ -33,7 +32,6 @@ object TransformationDriver extends Logging {
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
       "org.apache.kafka.common.serialization.StringSerializer")
 
-    val producer = new KafkaProducer[String, String](props)
 
     val args2 = (Consts.Zookeeper, "group1", Consts.TopicName, 1)
     val (zkQuorum, group, topics, numThreads) = args2
@@ -47,17 +45,22 @@ object TransformationDriver extends Logging {
     val rows = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
     //var headerRows = rows.map[ReportHeader](Serialization.read[ReportHeader])
 
-    val count = rows.countByWindow(Minutes(1), Seconds(10))
+    val countRDD = rows.countByWindow(Minutes(1), Seconds(10))
 
-    var num = 0L
+    countRDD.print()
 
-    count.foreachRDD { rdd => num += rdd.count() }
-    count.print()
+    countRDD.foreachRDD {
+      rdd => {
 
-    println(num)
+        val producer = new KafkaProducer[String, String](props)
+        val count:Long = rdd.first()
+        val message = new ProducerRecord[String, String](topic, count.toString(), count.toString())
+        producer.send(message)
+        producer.close()
 
-    val message = new ProducerRecord[String, String](topic, num.toString(), num.toString())
-    producer.send(message)
+        println("The count is %d".format(count))
+      }
+    }
 
     ssc.start()
     ssc.awaitTermination()

@@ -3,6 +3,7 @@ echo Update apt-get...
 apt-get update -yqq
 echo Install java...
 apt-get install openjdk-7-jdk -yqq
+pip install --upgrade fabric
 
 cd /tmp
 if ! which scala; then

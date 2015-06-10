@@ -5,7 +5,8 @@
   "main": "app.js",
   "dependencies": {
     "express": "~4.12.4",
-    "kafka-node": "~0.2.27"
+    "kafka-node": "~0.2.27",
+    "sse": "0.0.6"
   },
   "devDependencies": {},
   "scripts": {

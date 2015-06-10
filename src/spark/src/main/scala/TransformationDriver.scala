@@ -23,18 +23,16 @@ object TransformationDriver extends Logging {
     val (zkQuorum, group, topics, numThreads) = args2
 
     val sparkConf = new SparkConf().setAppName("KafkaTransformer")
-    val ssc = new StreamingContext(sparkConf, Seconds(2))
+    val ssc = new StreamingContext(sparkConf, Seconds(5))
 
     ssc.checkpoint("checkpoint")
     val topicMap = topics.split(",").map((_, numThreads)).toMap
 
     val rows = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
-    var headerRows = rows.map[ReportHeader](Serialization.read[ReportHeader])
+    //var headerRows = rows.map[ReportHeader](Serialization.read[ReportHeader])
 
-
-
-    //val count = rows.countByWindow(Minutes(1), Minutes(1))
-    //count.print()
+    val count = rows.countByWindow(Minutes(1), Seconds(10))
+    count.print()
 
     ssc.start()
     ssc.awaitTermination()

@@ -34,10 +34,10 @@ object ESBProducer {
     // Send some messages
     while (true) {
       (1 to messagesPerSec).foreach { rptId =>
-        val entityId = Random.nextInt(20000)
-        val rpt = ReportHeader(entityId, rptId, "First report", new Date(), "user1")
-        (1 to Random.nextInt(20)).foreach { entryId =>
-          val entry = ReportEntry(entityId, rptId, entryId, "First report", 200, 'C')
+        val entityId = DataGenerator.int(20000)
+        val rpt = ReportHeader(entityId, rptId, DataGenerator.string(20), new Date(), "user1")
+        (1 to DataGenerator.int(10)).foreach { entryId =>
+          val entry = ReportEntry(entityId, rptId, entryId, DataGenerator.string(20), 200, 'C')
         }
 
         val rptKey = "%d:%d".format(entityId, rptId)
@@ -46,7 +46,8 @@ object ESBProducer {
         val message = new ProducerRecord[String, String](topic, rptKey, rptJson)
         producer.send(message)
       }
-      Thread.sleep(100)
+
+      Thread.sleep(DataGenerator.int(200))
     }
   }
 }

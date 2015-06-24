@@ -21,7 +21,6 @@ object TransformationDriver extends Logging {
       )
     )
 
-
     val (brokers, topic, messagesPerSec) = (Consts.BrokerName, Consts.TopicName_Count, 10)
 
     // Zookeeper connection properties
@@ -53,7 +52,7 @@ object TransformationDriver extends Logging {
       rdd => {
 
         val producer = new KafkaProducer[String, String](props)
-        val count:Long = rdd.first()
+        val count: Long = rdd.first()
         val message = new ProducerRecord[String, String](topic, count.toString(), count.toString())
         producer.send(message)
         producer.close()

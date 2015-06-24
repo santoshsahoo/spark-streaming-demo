@@ -3,9 +3,12 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
+RUNNING=0
 
 stopeverything() {
-  trap - INT
+  if [ "$RUNNING" -eq 1 ]; then exit; fi
+
+  RUNNING=1
 
   echo "Stopping ZoooKeeper.."
   ZOO_LOG_DIR="$ZOO_LOG_DIR" $ZOO_BIN/zkServer.sh stop "$PWD/$ZK_CFGFILE"
@@ -23,6 +26,8 @@ stopeverything() {
 }
 
 trap stopeverything INT
+
+export JAVA_HOME='/usr/lib/jvm/java-7-openjdk-amd64'
 
 sudo mkdir -p /var/zookeeper
 sudo mkdir -p /var/kafka

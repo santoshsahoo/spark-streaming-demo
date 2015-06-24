@@ -1,13 +1,14 @@
+#!/bin/sh
 
-echo Update apt-get...
+echo Updating apt-get...
 apt-get update -yqq
-echo Install java...
+echo Installing java...
 apt-get install openjdk-7-jdk -yqq
 pip install --upgrade fabric
 
 cd /tmp
 if ! which scala; then
-	echo Install scala..
+	echo Installing scala..
 	wget www.scala-lang.org/files/archive/scala-2.10.4.deb
 	dpkg -i scala-2.10.4.deb
 fi
@@ -47,3 +48,13 @@ hostname | sed -e 's?node??' | tee /usr/local/lib/zookeeper/myid
 
 cat /vagrant/hosts.txt > /etc/hosts
 #cat /vagrant/platform3_key.pub >> /home/vagrant/.ssh/authorized_keys
+#http://unix.stackexchange.com/questions/33271/how-to-avoid-ssh-asking-permission
+
+su vagrant -c \
+'
+rm ~/.ssh/id_dsa*
+ssh-keygen -t dsa -P "" -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub > ~/.ssh/authorized_keys
+cat /vagrant/ssh-config.txt > ~/.ssh/config
+ssh node1 "echo Hello form \$hostname"
+'

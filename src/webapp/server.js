@@ -60,7 +60,7 @@ app.get('/stream', function(req, res) {
       var num = parseInt(message.value) || 0;;
       sendSSE(res, id, num);
 
-      console.log("sent " + num);
+      console.log(message);
     });
 
     // var high = 5000, low = 0, rand = Math.random() * (high - low) + low;

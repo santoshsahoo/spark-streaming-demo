@@ -30,11 +30,6 @@ echo Install kafka...
 /vagrant/bootstrap/kafka-install
 echo Install spark...
 /vagrant/bootstrap/spark-install
-cat > /usr/local/lib/spark/conf/slaves <<EOF
-node1
-node2
-node3
-EOF
 
 su vagrant -c /dotfiles/install
 
@@ -53,8 +48,22 @@ cat /vagrant/hosts.txt > /etc/hosts
 su vagrant -c \
 '
 rm ~/.ssh/id_dsa*
-ssh-keygen -t dsa -P "" -f ~/.ssh/id_dsa
-cat ~/.ssh/id_dsa.pub > ~/.ssh/authorized_keys
 cat /vagrant/ssh-config.txt > ~/.ssh/config
-ssh node1 "echo Hello form \$hostname"
+ssh-keygen -t dsa -P "" -f ~/.ssh/id_dsa
+cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
+ssh node1 "echo Hello from \$HOSTNAME"
 '
+killall -9 java
+
+cp /vagrant/spark/conf/* /usr/local/lib/spark/conf/
+cp /vagrant/hadoop/etc/* /usr/local/lib/hadoop/etc/hadoop/
+
+export HADOOP_HOME='/var/hadoop'
+export HADOOP_LOG_DIR=$HADOOP_HOME/logs
+rm -rf $HADOOP_HOME
+for dir in name data logs; do mkdir -p $HADOOP_HOME/$dir; done
+
+export JAVA_HOME='/usr/lib/jvm/java-7-openjdk-amd64'
+/usr/local/lib/hadoop/bin/hdfs namenode -format
+chmod -R 777 $HADOOP_HOME
+chown vagrant:vagrant -R $HADOOP_HOME

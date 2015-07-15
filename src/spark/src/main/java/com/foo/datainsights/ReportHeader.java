@@ -37,19 +37,21 @@ public class ReportHeader implements Serializable {
         return entity + "," + reportId + "," + title + "," + dt.format(createdDate) + "," + userId + "," + total;
     }
 
-    public static ReportHeader parseCsv(String row) {
-        ReportHeader rpt = new ReportHeader();
-        try {
-            String[] vals = row.split(",");
-            rpt.entity = Integer.parseInt(vals[0]);
-            rpt.reportId = Integer.parseInt(vals[1]);
-            rpt.title = vals[2];
-            rpt.createdDate = dt.parse(vals[3]);
-            rpt.userId = vals[4];
-            rpt.total = Long.parseLong(vals[5]);
-        } catch (Exception ex) {
+    public static ReportHeader parseCsv(String row) throws Exception {
 
-        }
+        ReportHeader rpt = new ReportHeader();
+//        try {
+        //hack ignore the key value
+            String[] vals = row.split(",");
+            rpt.entity = Integer.parseInt(vals[1]);
+            rpt.reportId = Integer.parseInt(vals[2]);
+            rpt.title = vals[3];
+            rpt.createdDate = dt.parse(vals[4]);
+            rpt.userId = vals[5];
+            rpt.total = Long.parseLong(vals[6].replace(")", ""));
+//        } catch (Exception ex) {
+//
+//        }
 
         return rpt;
     }

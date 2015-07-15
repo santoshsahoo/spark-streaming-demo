@@ -59,14 +59,17 @@ app.get('/stream', function(req, res) {
       console.log("Redis Error: " + err);
     });
 
-    var id = (new Date()).toLocaleTimeString();
 
     console.log("New SSE connected");
+
+    var id = (new Date()).toLocaleTimeString();
 
     subscriber.on("message", function(channel, message) {
       var high = 5000,
         low = 0,
         rand = Math.random() * (high - low) + low;
+
+      id = (new Date()).toLocaleTimeString();
       var num = parseInt(message) || 0;
       sendSSE(res, id, num);
 
@@ -109,21 +112,15 @@ app.get('/fraudalert', function(req, res) {
       console.log("Redis Error: " + err);
     });
 
+    console.log("New SSE connected");
     var id = (new Date()).toLocaleTimeString();
 
-    console.log("New SSE connected");
-
     subscriber.on("message", function(channel, message) {
-      var high = 5000,
-        low = 0,
-        rand = Math.random() * (high - low) + low;
-      var num = parseInt(message) || 0;
-      sendSSE(res, id, num);
-
+      id = (new Date()).toLocaleTimeString();
+      sendSSE(res, id, message);
       console.log(message);
     });
 
-    sendSSE(res, id, 0);
   } else {
     res.writeHead(500);
     res.end();

@@ -67,3 +67,7 @@ export JAVA_HOME='/usr/lib/jvm/java-7-openjdk-amd64'
 /usr/local/lib/hadoop/bin/hdfs namenode -format
 chmod -R 777 $HADOOP_HOME
 chown vagrant:vagrant -R $HADOOP_HOME
+
+apt-get install -yqq redis-server postgresql nodejs npm
+npm install forever express hiredis redis -g
+sudo ln -s /usr/bin/nodejs /usr/bin/node

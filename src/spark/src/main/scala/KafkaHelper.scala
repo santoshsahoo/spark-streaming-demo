@@ -17,7 +17,7 @@ object KafkaHelper {
 
     val props = new Properties()
     props.put("producer.type", "async")
-    props.put("metadata.broker.list", Consts.BrokerName)
+    props.put("metadata.broker.list", Consts.BrokerNames)
     props.put("client.id", "test client")
 
     val producer = new Producer[AnyRef, AnyRef](new ProducerConfig(props))

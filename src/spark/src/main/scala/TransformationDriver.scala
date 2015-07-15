@@ -1,63 +1,63 @@
 package com.foo.datainsights
 
-import java.util.HashMap
-
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
+import _root_.kafka.serializer.StringDecoder
+import com.redis.RedisClient
 import org.apache.spark.streaming._
 import org.apache.spark.streaming.kafka._
 import org.apache.spark.{Logging, SparkConf}
-import org.json4s.ShortTypeHints
-import org.json4s.native.Serialization
 
 object TransformationDriver extends Logging {
 
   def main(args: Array[String]) {
-    implicit val formats = Serialization.formats(
-      ShortTypeHints(
-        List(
-          classOf[ReportHeader],
-          classOf[ReportEntry]
-        )
-      )
-    )
 
-    val (brokers, topic, messagesPerSec) = (Consts.BrokerName, Consts.TopicName_Count, 10)
+    val redisChannelNameCounts = "reportCounts"
+    val redisChannelNameFraudAlert = "reportFraudAlert"
+    val checkpointDirectory = "/tmp/spark/checkpoint"
 
-    // Zookeeper connection properties
-    val props = new HashMap[String, Object]()
-    props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers)
-    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-      "org.apache.kafka.common.serialization.StringSerializer")
-    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-      "org.apache.kafka.common.serialization.StringSerializer")
+    val sparkConf = new SparkConf().setAppName("ReportingTransformer")
 
+    def createNewSSC(): StreamingContext = {
+      val ssc = new StreamingContext(sparkConf, Seconds(5))
+      ssc.checkpoint(checkpointDirectory)
+      ssc
+    }
 
-    val args2 = (Consts.Zookeeper, "group1", Consts.TopicName, 1)
-    val (zkQuorum, group, topics, numThreads) = args2
+    val ssc = createNewSSC() //StreamingContext.getOrCreate(checkpointDirectory, createNewSSC _)
 
-    val sparkConf = new SparkConf().setAppName("KafkaTransformer")
-    val ssc = new StreamingContext(sparkConf, Seconds(5))
+    val kafkaParams = Map("metadata.broker.list" -> Consts.BrokerNames)
+    val topics = Set(Consts.REPORTS_TopicName)
 
-    ssc.checkpoint("checkpoint")
-    val topicMap = topics.split(",").map((_, numThreads)).toMap
+    val kafkaDStream = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](ssc, kafkaParams, topics)
 
-    val rows = KafkaUtils.createStream(ssc, zkQuorum, group, topicMap).map(_._2)
-    //var headerRows = rows.map[ReportHeader](Serialization.read[ReportHeader])
+    val reportDs = kafkaDStream.map(entry => entry.toString())
+    val reports = reportDs.map(csv => ReportHeader.parseCsv(csv))
 
-    val countRDD = rows.countByWindow(Minutes(1), Seconds(10))
+    val fraudDs = reports.filter(report => report != null && report.getTotal > 45000)
 
-    countRDD.print()
-
-    countRDD.foreachRDD {
+    fraudDs.foreachRDD(
       rdd => {
+        if (!rdd.isEmpty()) {
+          val redis = new RedisClient("localhost", 6379)
+          val id = rdd.first().getReportId.toString
+          redis.publish(redisChannelNameFraudAlert, id)
+          redis.disconnect
+        }
+      })
 
-        val producer = new KafkaProducer[String, String](props)
-        val count: Long = rdd.first()
-        val message = new ProducerRecord[String, String](topic, count.toString(), count.toString())
-        producer.send(message)
-        producer.close()
 
-        println("The count is %d".format(count))
+    val countDS = reports.countByWindow(Minutes(1), Seconds(10))
+
+    countDS.foreachRDD {
+      rdd => {
+        if (!rdd.isEmpty()) {
+          val redis = new RedisClient("localhost", 6379)
+          val count: String = rdd.first().toString
+          redis.publish(redisChannelNameCounts, count)
+
+          logTrace("The count is %s".format(count))
+          logTrace("-----------------------------------------------------------------")
+          redis.disconnect
+        }
       }
     }
 

@@ -2,6 +2,8 @@ package com.foo.datainsights
 
 import java.util.Date
 
-case class ReportHeader(entity: Int, reportId:Int, title: String, createdDate: Date, userId: String)
+//class ReportHeader(var entity: Int, var reportId: Int, var title: String,
+//                   var createdDate: Date, var userId: String, var total: Long) extends Serializable
 
-case class ReportEntry(entity:Int, reportId:Int, category:Int, description:String, amount:Int, currency:Char)
+class ReportEntry(entity: Int, reportId: Int,
+                  category: Int, description: String, amount: Int, currency: Char) extends Serializable

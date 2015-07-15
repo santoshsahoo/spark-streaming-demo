@@ -67,6 +67,10 @@ function chart(domain, interpolation, container) {
     data.shift();
   };
 
+  // window.setInterval(function () {
+  //   tick(0);
+  // }, 15000);
+
   if (!!window.EventSource) {
     var source = new EventSource('/stream');
     source.addEventListener('message', function(e) {

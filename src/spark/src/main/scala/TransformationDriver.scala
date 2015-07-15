@@ -32,7 +32,7 @@ object TransformationDriver extends Logging {
     val reportDs = kafkaDStream.map(entry => entry.toString())
     val reports = reportDs.map(csv => ReportHeader.parseCsv(csv))
 
-    val fraudDs = reports.filter(report => report != null && report.getTotal > 49000)
+    val fraudDs = reports.filter(report => report != null && report.getTotal > 49500)
 
     fraudDs.foreachRDD(
       rdd => {

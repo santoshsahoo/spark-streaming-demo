@@ -3,7 +3,7 @@
 echo Updating apt-get...
 apt-get update -yqq
 echo Installing java...
-apt-get install openjdk-7-jdk -yqq
+apt-get install openjdk-7-jdk python-pip -yqq
 pip install --upgrade fabric
 
 cd /tmp
@@ -69,5 +69,5 @@ chmod -R 777 $HADOOP_HOME
 chown vagrant:vagrant -R $HADOOP_HOME
 
 apt-get install -yqq redis-server postgresql nodejs npm
+sudo ln -fs /usr/bin/nodejs /usr/bin/node
 npm install forever express hiredis redis -g
-sudo ln -s /usr/bin/nodejs /usr/bin/node

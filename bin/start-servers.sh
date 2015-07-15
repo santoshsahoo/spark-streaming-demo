@@ -30,7 +30,7 @@ logMessage "Starting Spark.."
 
 SPARK_LOG_DIR="$SPARK_LOG_DIR" $SPARK_SBIN/start-master.sh
 SPARK_LOG_DIR="$SPARK_LOG_DIR" SPARK_WORKER_DIR="/tmp/spark-work" \
-  $SPARK_SBIN/start-slave.sh worker1 spark://node1:7077
+  $SPARK_SBIN/start-slave.sh spark://node1:7077
 
 sleep 5
 
